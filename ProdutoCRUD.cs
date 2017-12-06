@@ -1,6 +1,6 @@
 namespace ExemploCRUD
 {
-    public class newclass
+    public class ProdutoCRUD
     {
         
     }

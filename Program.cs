@@ -6,7 +6,14 @@ namespace ExemploCRUD
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            BancoDados bd = new BancoDados();
+            Categoria ca = new Categoria();
+
+            Console.WriteLine("Insira o título: ");
+            string novoTitulo = Console.ReadLine();
+
+            
+
         }
     }
 }
