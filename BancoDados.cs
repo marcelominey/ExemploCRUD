@@ -167,5 +167,58 @@ namespace ExemploCRUD
             }
             return lista;
         }
+
+        public bool AdicionarCliente(Cliente cliente){
+            bool rs = false;
+            try{
+                cn = new SqlConnection(); //apenas se comunicando com o servidor.
+                //para se comunicar, precisa dizer o caminho, o BD que vou utilizar, o usuário e a senha:
+                cn.ConnectionString = @"Data Source = .\sqlexpress; initial catalog = Papelaria; user id = sa; password=senai@123";
+                cn.Open();
+                comandos = new SqlCommand(); //vou dar os comandos de SQL dentro no banco referenciado cn.
+                //em seguida, estabeleço uma relação entre o BD e :
+                comandos.Connection = cn;
+                
+                comandos.CommandType = CommandType.StoredProcedure;
+                comandos.CommandText = "sp_cadCliente"; //os parâmetros não estão aqui, estão lá dentro da procedure, no BD.
+                //Veja que não tem @nome de nada, portanto, ele não é um parâmetro de C#, é um parâmetro de Banco!
+                //Se quiser, compare com o método ListarCategorias, acima.
+
+                SqlParameter pnome = new SqlParameter("@nome",SqlDbType.VarChar,50);//é um parâmetro de SQL mesmo.
+                //Estou criando um parâmetro pome para que o C# tome conhecimento do parâmetro lá dentro da minha procedure!
+                //AGORA, aquele parâmetro está sendo representado pelo pnome.
+                pnome.Value = cliente.NomeCliente;
+                comandos.Parameters.Add(pnome);
+                //lá na procedure, tenho vários elementos aguardando para serem adicionados.
+                //vou passar primeiro todos os elementos para o parâmetro; só depois, eu vou mandar inserir.
+                
+                SqlParameter pemail = new SqlParameter("@email",SqlDbType.VarChar,100);
+                pemail.Value = cliente.EmailCliente;
+                comandos.Parameters.Add(pemail);
+
+                SqlParameter pcpf = new SqlParameter("@cpf",SqlDbType.VarChar,20);
+                pcpf.Value = cliente.CpfCliente;
+                comandos.Parameters.Add(pcpf);
+
+                int r = comandos.ExecuteNonQuery();
+
+                if(r > 1)
+                    rs = true;
+                
+                comandos.Parameters.Clear();
+                
+            }
+            catch(SqlException se){
+                throw new Exception("Erro ao tentar inserir os dados "+se.Message);
+            }
+            catch(Exception ex){
+                throw new Exception("erro inesperado "+ex.Message);
+            }
+            finally{
+                cn.Close();
+            }
+            return rs;
+        }
     }
 }
+
